@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Function to get tasks
+            function getTasks() {
+                $.ajax({
+                    url: "/api/tasks",
+                    type: "GET",
+                    success: function(response) {
+                        // Display tasks in the HTML
+                        $("#tasks").html(response);
+                    }
+                });
+            }
+
+            // Function to create a task
+            function createTask() {
+                var task = $("#task-input").val();
+                $.ajax({
+                    url: "/api/task",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ "task": task }),
+                    success: function(response) {
+                        // Refresh task list
+                        getTasks();
+                        $("#task-input").val('');
+                    }
+                });
+            }
+
+            // Function to update a task
+            function updateTask(task) {
+                $.ajax({
+                    url: "/api/task",
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify({ "task": task }),
+                    success: function(response) {
+                        // Refresh task list
+                        getTasks();
+                    }
+                });
+            }
+
+            // Function to delete a task
+            function deleteTask(id) {
+                $.ajax({
+                    url: "/api/task/" + id,
+                    type: "DELETE",
+                    success: function(response) {
+                        // Refresh task list
+                        getTasks();
+                    }
+                });
+            }
+
+            // Event listener for form submission
+            $("#task-form").submit(function(event) {
+                event.preventDefault();
+                createTask();
+            });
+
+            // Initial load of tasks
+            getTasks();
+        });
+    </script>
+</head>
+<body>
+    <h1>Flask App</h1>
+    <form id="task-form">
+        <input type="text" id="task-input" placeholder="Enter a task" required>
+        <button type="submit">Add Task</button>
+    </form>
+    <h2>Tasks</h2>
+    <ul id="tasks"></ul>
+</body>
+</html>
